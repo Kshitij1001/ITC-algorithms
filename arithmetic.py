@@ -3,26 +3,59 @@ import itc_basics as b
 probabilities: list = b.probInput()
 symbols: list = b.symbInput()
 
-toEncode = input('enter the word to encode: ').split(' ')
-
 ladder: list = [0]
 for i in probabilities:
     ladder.append(round(i + ladder[-1], 9))
 ladder[-1] = 1
-print(ladder)
-for k in range(len(toEncode)):
-    for i in range(len(symbols)):
-        if toEncode[k] == symbols[i]:
-            lower = ladder[i]
-            upper = ladder[i + 1]
-            gap = round(upper - lower, 9)
-            ladderNew = [lower]
-            for j in probabilities:
-                ladderNew.append(round(ladderNew[-1] + j * gap, 9))
-            ladderNew[-1] = upper
-            ladder = ladderNew
-            break
+while True:
+    encode_or_decode: str = input('Wanna encode(1) or decode(2)?   ....   (Enter either 1 or 2) ')
+    if not (encode_or_decode == '1' or encode_or_decode == '2'):
+        print('Invalid input')
+    else:
+        break
+
+
+def newLadder(oldLadder: list, numb: int):
+    gapp = round(oldLadder[numb + 1] - oldLadder[numb], 9)
+    nextLadder: list = [oldLadder[numb]]
+    for jj in probabilities:
+        nextLadder.append(round(nextLadder[-1] + jj * gapp, 9))
+    nextLadder[-1] = oldLadder[numb + 1]
+    return nextLadder
+
+
+if encode_or_decode == '1':
+    toEncode = input('enter the word to encode: ').split(' ')
     print(ladder)
-ans = (ladder[-1] + ladder[0]) / 2
-print('The encoded value is: ', ans)
-print('The encoded binary value is: ' + b.probability_in_binary(ans))
+    for k in toEncode:
+        for i in range(len(symbols)):
+            if k == symbols[i]:
+                ladder = newLadder(ladder, i)
+                break
+        print(ladder)
+    ans = (ladder[-1] + ladder[0]) / 2
+    print('The encoded value (mean) is: ', ans, 'and for lower bound is: ', ladder[0])
+    print('The encoded binary value (mean) is: ' + b.probability_in_binary(
+        ans) + ' and for lower bound is: ' + b.probability_in_binary(ladder[0]))
+else:
+    message = []
+    toFind = float(input('Enter probability to find out: '))
+    print(ladder)
+    done = 0
+    for i in range(100):
+        for j in range(len(symbols)):
+            if toFind == ladder[j]:
+                message.append(symbols[j])
+                done += 1
+                if done == 2:
+                    break
+                ladder = newLadder(ladder, j)
+                break
+            if ladder[j] < toFind < ladder[j + 1]:
+                message.append(symbols[j])
+                ladder = newLadder(ladder, j)
+                break
+        if done == 2:
+            break
+        print(ladder)
+    print('The decoded message is: ', message)
