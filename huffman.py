@@ -15,6 +15,12 @@ class Node:
 
 probs = b.probInput()  # [0.25, 0.15, 0.12, 0.1, 0.08, 0.3]
 symbs = b.symbInput()  # ['m2', 'm3', 'm4', 'm5', 'm6', 'm1']
+while True:
+    minOrmax: str = input('Minimum variance(1) or maximum variance(2)? (enter either 1 or 2)')
+    if not (minOrmax == '1' or minOrmax == '2'):
+        print(minOrmax + ' is an invalid option')
+    else:
+        break
 
 gen0 = []
 for x in range(len(probs)):
@@ -32,14 +38,24 @@ for i in range(len(gen0) - 2):
     new.p1, new.p2 = gen[-2], gen[-1]
     gen = gen[:-2]
     flg = True
-    # For minimum variance
-    for k in range(len(gen)):
-        if sumPro >= gen[k].prob:
-            gen = gen[:k] + [new] + gen[k:]
-            flg = False
-            break
-    if flg:
-        gen.append(new)
+    if minOrmax == '1':
+        # For minimum variance
+        for k in range(len(gen)):
+            if sumPro >= gen[k].prob:
+                gen = gen[:k] + [new] + gen[k:]
+                flg = False
+                break
+        if flg:
+            gen.append(new)
+    else:
+        # For maximum variance
+        for k in range(len(gen) - 1, -1, -1):
+            if sumPro <= gen[k].prob:
+                gen = gen[:k + 1] + [new] + gen[k + 1:]
+                flg = False
+                break
+        if flg:
+            gen = [new] + gen
     if len(gen) == 0:
         break
     ranks.append(gen)
