@@ -24,3 +24,13 @@ def probInput():
 
 def symbInput():
     return input('Enter symbols: ').split(' ')
+
+
+def probability_in_binary(probability, bits_precision=10):
+    ans: str = '0.'
+    for i in range(bits_precision):
+        probability *= 2
+        x = int(probability)
+        probability -= x
+        ans = ans + str(x)
+    return ans.rstrip('0')
