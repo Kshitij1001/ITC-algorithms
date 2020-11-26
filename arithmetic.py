@@ -25,7 +25,7 @@ def newLadder(oldLadder: list, numb: int):
 
 
 if encode_or_decode == '1':
-    toEncode = input('enter the word to encode: ').split(' ')
+    toEncode = input('enter the sequence of symbols to encode: ').split(' ')
     print(ladder)
     for k in toEncode:
         for i in range(len(symbols)):
@@ -44,15 +44,12 @@ else:
     done = 0
     for i in range(100):
         for j in range(len(symbols)):
-            if toFind == ladder[j]:
+            if ladder[j] <= toFind < ladder[j + 1]:
                 message.append(symbols[j])
-                done += 1
-                if done == 2:
-                    break
-                ladder = newLadder(ladder, j)
-                break
-            if ladder[j] < toFind < ladder[j + 1]:
-                message.append(symbols[j])
+                if ladder[j] == toFind:
+                    done += 1
+                    if done == 2:
+                        break
                 ladder = newLadder(ladder, j)
                 break
         if done == 2:
